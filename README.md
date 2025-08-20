@@ -13,7 +13,7 @@ conda activate transBind
 
 ## Model Overview
 
-![TransBind Architecture](images/MainDiagramV1.png)
+![TransBind Architecture](MainDiagramV1.png)
 
 *Figure 1: TransBind model architecture for transcription factor binding site prediction*
 
