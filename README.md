@@ -1,27 +1,42 @@
 # TransBind
 
-TransBind is a deep learning framework for transcription factor (TF) binding prediction that combines DNA sequence information with protein structural features to capture the true diversity of TF–DNA interactions. Unlike prior models that treat all TFs identically, TransBind uses embeddings from ESM-DBP (a protein language model trained on DNA-binding proteins) and a cross-attention mechanism to align each TF’s unique structural properties with genomic sequence features. Trained on 690 ChIP-seq experiments covering 161 TFs across 91 human cell types, TransBind achieves state-of-the-art accuracy (AUROC 0.9504, AUPR 0.3710), recovers known binding motifs for interpretability, and uniquely supports zero-shot prediction for unseen TFs using their amino acid and DNA sequence. This integration of protein-aware modeling with genomic deep learning provides a powerful tool for studying gene regulation, understanding disease-associated variants, and guiding synthetic biology applications.
-## Model Overview
+## Table of Contents
+- [Overview](#overview)
+- [Model Architecture](#model-architecture)
+- [Installation](#installation)
+  - [Requirements](#requirements)
+- [Data Preprocessing Pipeline](#data-preprocessing-pipeline)
+  - [Protein Features](#protein-features)
+- [Training and Testing](#training-and-testing)
+  - [Training Data Preparation](#training-data-preparation)
+  - [Training](#training)
+  - [Testing](#testing)
+  - [Prediction](#prediction)
+- [Citation](#citation)
 
-![TransBind Architecture](Model_diagram_V4.png)
+## Overview
+
+TransBind is a deep learning framework for transcription factor (TF) binding prediction that combines DNA sequence information with protein structural features to capture the true diversity of TF–DNA interactions. Unlike prior models that treat all TFs identically, TransBind uses embeddings from ESM-DBP (a protein language model trained on DNA-binding proteins) and a cross-attention mechanism to align each TF’s unique structural properties with genomic sequence features. Trained on 690 ChIP-seq experiments covering 161 TFs across 91 human cell types, TransBind achieves state-of-the-art accuracy (AUROC 0.9504, AUPR 0.3710), recovers known binding motifs for interpretability, and uniquely supports zero-shot prediction for unseen TFs using their amino acid and DNA sequence. This integration of protein-aware modeling with genomic deep learning provides a powerful tool for studying gene regulation, understanding disease-associated variants, and guiding synthetic biology applications.
+
+## Model Architecture
+![Model Architecture](Model_diagram_V4.png)
 
 *Figure 1: TransBind model architecture for transcription factor binding site prediction*
 
 ## Installation
 
+### Requirements
+- PyTorch + PyTorch Lightning
+- NumPy, scikit-learn, h5py
+- CUDA recommended
+
+### Quick Install
 ```bash
 git clone https://github.com/jianlin-cheng/TFDNABind.git
 cd TFDNABind
 conda env create -f environment.yml
 conda activate transBind
 ```
-
-## Requirements
-
-- PyTorch + PyTorch Lightning
-- NumPy, scikit-learn, h5py
-- CUDA recommended
-
 
 ## Data Preprocessing Pipeline
 This pipeline prepares training data for transcription factor binding site prediction by downloading, preprocessing, labeling, and organizing genomic sequences into a final dataset.
@@ -39,9 +54,8 @@ This pipeline prepares training data for transcription factor binding site predi
 ### Protein Features
 To extract protein-level embeddings, use ESM-DBP: https://github.com/pengsl-lab/ESM-DBP
 
-# Training and Testing
+## Training and Testing
 
-## Training
 ###  Training Data Preparation
 
 Before training the model, complete the following steps:
@@ -56,6 +70,13 @@ Before training the model, complete the following steps:
 ---
 
 ### Training  
+Update the following paths in your configuration:
+```python
+    DATA_FOLDER = "data/"
+    MAPPING_FILE = "data/tf_features/tf_to_feature_mapping_exact.json"
+    FEATURES_DIR = "data/tf_features/"
+```
+
 Run the main training script to train TransBind 
 
 ```bash
@@ -77,11 +98,17 @@ To run prediction for the new transcription factors(TFs):
 2. Generate protein features
     Extract TF embeddings using ESM-DBP
 3. Load the mapping file and feature Folder 
-    Use the mapping file found in /bml/shreya/BenchMarking_TF/tbinet/create_mapping_label_tf/TransBind/data/tf_features/tf_to_feature_mapping_exact.json
+    Use the mapping file found in data/tf_features/tf_to_feature_mapping_exact.json
     Use the feature folder 
-    create_mapping_label_tf/TransBind/data/tf_features
-4. Download and use the checkpoint found in /bml/shreya/BenchMarking_TF/tbinet/create_mapping_label_tf/TransBind/model/model_general.ckpt
-5. Run prediction
-    Open predict.ipynb and execute the first cell to start inference.
+    data/tf_features
+4. Download and use the checkpoint found in model/model_general.ckpt
+5. Update the following path 
 
-## Reference 
+    TF_FEA_FILE = "data/your_tf.fea" #your TF features
+    SEQUENCES_FILE = "data/sequences.mat" #your DNA sequence
+5. Run prediction
+    ```bash
+    python predict.py
+    ```
+
+## Citation
