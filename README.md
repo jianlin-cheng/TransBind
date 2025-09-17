@@ -67,8 +67,21 @@ Run the train_general.py to train TransBind_general
 python train_general.py [arguments]
 ```
 
-
 ### Testing
 For testing use `test.ipynb`
+
+### Prediction
+To run prediction for the new transcription factors(TFs):
+1. Format sequences 
+    Use 6_build_dataset.py from data preprocessing for sequence formatting. Make sure the length of the input sequence is 1000bp.
+2. Generate protein features
+    Extract TF embeddings using ESM-DBP
+3. Load the mapping file and feature Folder 
+    Use the mapping file found in /bml/shreya/BenchMarking_TF/tbinet/create_mapping_label_tf/TransBind/data/tf_features/tf_to_feature_mapping_exact.json
+    Use the feature folder 
+    create_mapping_label_tf/TransBind/data/tf_features
+4. Download and use the checkpoint found in /bml/shreya/BenchMarking_TF/tbinet/create_mapping_label_tf/TransBind/model/model_general.ckpt
+5. Run prediction
+    Open predict.ipynb and execute the first cell to start inference.
 
 ## Reference 
