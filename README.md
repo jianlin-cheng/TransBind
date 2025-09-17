@@ -1,6 +1,11 @@
 # TransBind
 
 TransBind is a deep learning framework for transcription factor (TF) binding prediction that combines DNA sequence information with protein structural features to capture the true diversity of TF–DNA interactions. Unlike prior models that treat all TFs identically, TransBind uses embeddings from ESM-DBP (a protein language model trained on DNA-binding proteins) and a cross-attention mechanism to align each TF’s unique structural properties with genomic sequence features. Trained on 690 ChIP-seq experiments covering 161 TFs across 91 human cell types, TransBind achieves state-of-the-art accuracy (AUROC 0.9504, AUPR 0.3710), recovers known binding motifs for interpretability, and uniquely supports zero-shot prediction for unseen TFs using their amino acid and DNA sequence. This integration of protein-aware modeling with genomic deep learning provides a powerful tool for studying gene regulation, understanding disease-associated variants, and guiding synthetic biology applications.
+## Model Overview
+
+![TransBind Architecture](Model_diagram_V4.png)
+
+*Figure 1: TransBind model architecture for transcription factor binding site prediction*
 
 ## Installation
 
@@ -11,13 +16,15 @@ conda env create -f environment.yml
 conda activate transBind
 ```
 
-## Model Overview
+## Requirements
 
-![TransBind Architecture](MainDiagramV1.png)
+- PyTorch + PyTorch Lightning
+- NumPy, scikit-learn, h5py
+- CUDA recommended
 
-*Figure 1: TransBind model architecture for transcription factor binding site prediction*
 
 ## Data Preprocessing Pipeline
+This pipeline prepares training data for transcription factor binding site prediction by downloading, preprocessing, labeling, and organizing genomic sequences into a final dataset.
 
 | Step | Script | Description |
 |------|--------|-------------|
@@ -30,28 +37,38 @@ conda activate transBind
 | 7 | `8_label_mapping_between_label_and_TF` | Create comprehensive mapping between labels and TFs |
 
 ### Protein Features
-For protein features, use ESM-DBP: https://github.com/pengsl-lab/ESM-DBP
+To extract protein-level embeddings, use ESM-DBP: https://github.com/pengsl-lab/ESM-DBP
 
 ## Training and Testing
 
 ### Training
-- **Main model**: Use `train.py`
-- **General model**: Use `train_general.py`
+#  Training Data Preparation
 
-Update these paths in the `main()` function:
-```python
-DATA_FOLDER = "/path/to/your/data/"
-MAPPING_FILE = "/path/to/tf_to_feature_mapping_exact.json"
-FEATURES_DIR = "/path/to/tf_features/"
-```
+Before training the model, complete the following steps:
+
+| Step | Process              | Description                                                                 |
+|------|----------------------|-----------------------------------------------------------------------------|
+| 1️⃣   | Data preprocessing   | Complete steps 1–7 from the preprocessing pipeline described above          |
+| 2️⃣   | Protein embeddings   | Extract protein-level embeddings using **ESM-DBP**                          |
+| 3️⃣   | Dataset organization | Ensure `train.mat` and `valid.mat` are stored in the `data/` directory      |
+| 4️⃣   | Feature mapping      | Verify `tf_to_feature_mapping_exact.json` exists (links TF labels to features) |
+
+---
+
+#  Training and Testing
+
+### Training  
+Run the main training script to train TransBind 
+
+```bash
+python train.py
+
+Run the train_general.py to train TransBind_general
+```bash
+python train_general.py [arguments]
+
 
 ### Testing
 For testing use `test.ipynb`
-
-## Requirements
-
-- PyTorch + PyTorch Lightning
-- NumPy, scikit-learn, h5py
-- CUDA recommended
 
 ## Reference 
