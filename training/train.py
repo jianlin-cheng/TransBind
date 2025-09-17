@@ -427,13 +427,11 @@ def main():
     # 🆕 NEW: Protein feature configuration
     MAPPING_FILE = ".../tf_to_feature_mapping_exact.json"
     FEATURES_DIR = ".../tf_features/"
-    
-    # 🚀 OPTIMIZED: Model configuration with ALL optimized parameters
+
     USE_CROSS_ATTENTION = True
     USE_CLASS_WEIGHTING = False
     TF_FEATURE_PROJECTION_DIM = 320
-    
-    # 🚀 OPTIMIZED HYPERPARAMETERS (from your best trial: AUPR=0.3700)
+
     OPTIMIZED_PARAMS = {
         'learning_rate': 0.000328,     
         'dropout': 0.088,             
@@ -442,8 +440,6 @@ def main():
         'transformer_dim_feedforward': 1024, 
         'fc1_size': 1024,           
     }
-    
-    print("🚀 USING OPTIMIZED HYPERPARAMETERS:")
     for key, value in OPTIMIZED_PARAMS.items():
         print(f"   {key}: {value}")
     
