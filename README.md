@@ -98,9 +98,13 @@ To run prediction for the new transcription factors(TFs):
 2. Generate protein features
     Extract TF embeddings using ESM-DBP
 3. Load the mapping file and feature Folder 
-    Use the mapping file found in ```python data/tf_features/tf_to_feature_mapping_exact.json ```
+    Use the mapping file found in ```python
+     data/tf_features/tf_to_feature_mapping_exact.json 
+     ```
     Use the feature folder 
-    ```python data/tf_features ```
+    ```python 
+    data/tf_features 
+    ```
 4. Download and use the checkpoint found in model/model_general.ckpt
 5. Update the following path 
     ```python
