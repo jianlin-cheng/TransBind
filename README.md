@@ -39,33 +39,33 @@ This pipeline prepares training data for transcription factor binding site predi
 ### Protein Features
 To extract protein-level embeddings, use ESM-DBP: https://github.com/pengsl-lab/ESM-DBP
 
-## Training and Testing
+# Training and Testing
 
-### Training
-#  Training Data Preparation
+## Training
+###  Training Data Preparation
 
 Before training the model, complete the following steps:
 
 | Step | Process              | Description                                                                 |
 |------|----------------------|-----------------------------------------------------------------------------|
-| 1️⃣   | Data preprocessing   | Complete steps 1–7 from the preprocessing pipeline described above          |
-| 2️⃣   | Protein embeddings   | Extract protein-level embeddings using **ESM-DBP**                          |
-| 3️⃣   | Dataset organization | Ensure `train.mat` and `valid.mat` are stored in the `data/` directory      |
-| 4️⃣   | Feature mapping      | Verify `tf_to_feature_mapping_exact.json` exists (links TF labels to features) |
+| 1️   | Data preprocessing   | Complete steps 1–7 from the preprocessing pipeline described above          |
+| 2️   | Protein embeddings   | Extract protein-level embeddings using **ESM-DBP**                          |
+| 3️  | Dataset organization | Ensure `train.mat` and `valid.mat` are stored in the `data/` directory      |
+| 4️  | Feature mapping      | Verify `tf_to_feature_mapping_exact.json` exists (links TF labels to features) |
 
 ---
-
-#  Training and Testing
 
 ### Training  
 Run the main training script to train TransBind 
 
 ```bash
 python train.py
+```
 
 Run the train_general.py to train TransBind_general
 ```bash
 python train_general.py [arguments]
+```
 
 
 ### Testing
