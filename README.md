@@ -85,7 +85,7 @@ python train.py
 
 Run the train_general.py to train TransBind_general
 ```bash
-python train_general.py [arguments]
+python train_general.py
 ```
 
 ### Testing
