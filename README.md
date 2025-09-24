@@ -93,24 +93,91 @@ For testing use `test.ipynb`
 
 ### Prediction
 To run prediction for the new transcription factors(TFs):
-1. Format sequences 
-    Use 6_build_dataset.py from data preprocessing for sequence formatting. Make sure the length of the input sequence is 1000bp.
-2. Generate protein features
-    Extract TF embeddings using ESM-DBP
-3. Load the mapping file and feature Folder 
-    Use the mapping file found in 
-        data/tf_features/tf_to_feature_mapping_exact.json 
-    Use the feature folder 
-        data/tf_features 
-  
-4. Download and use the checkpoint found in model/model_general.ckpt
-5. Update the following path 
-    ```python
-    TF_FEA_FILE = "data/your_tf.fea" #your TF features
-    SEQUENCES_FILE = "data/sequences.mat" #your DNA sequence ```
-5. Run prediction
-    ```bash
-    python predict.py
-    ```
+
+## 1. DNA One-Hot Encoder
+
+Converts DNA sequences into one-hot encoded format and saves them as `.mat` files.
+
+### Usage
+```bash
+python dna_onehot_encoder.py [arguments]
+
+Arguments:
+  --sequence        Single DNA sequence to convert
+                   (e.g. --sequence "ATGCGATCG")
+  --fasta           FASTA file containing sequences
+                   (e.g. --fasta sequences.fasta)
+  --sequences       Multiple sequences provided directly
+                   (e.g. --sequences "ATGC" "CGTA")
+  --output          Output filename (required)
+                   (e.g. --output results.mat)
+  --window_size     Sequence length (default: 1000)
+  --no_complement   Don't add reverse complement
+
+```bash 
+python dna_onehot_encoder.py --sequence "ATGCGATCGTAGC" --output my_sequence.mat
+```
+## 2.TF Embedder
+
+1. Download model files from [Hugging Face](https://huggingface.co/zengwenwu/ESM-DBP/tree/main)
+2. Place the `ESM-DBP.model` files in the `ESM-DBP/` directory
+
+python prediction.py /path/to/ESM-DBP.model/ input.fasta /output/dir/ device
+
+Arguments:
+  /path/to/ESM-DBP.model/   Full path to directory with model files
+                           (e.g. /home/user/ESM-DBP/)
+  input.fasta               Protein sequence file in FASTA format
+                           (e.g. TF.fasta)
+  /output/dir/              Output directory for TF features
+                           (e.g. /home/user/results/)
+                
+3. To predict Transcription Factor binding prediction
+python predict.py [OPTIONS] --tf_fea_file TF_FILE --sequences_file SEQ_FILE
+
+Required Arguments:
+  --tf_fea_file PATH       Path to TF features file (.fea) obtained from step 2
+  --sequences_file PATH    Path to DNA sequences file (.mat) obtained from step 1
+
+Optional Arguments:
+  --model_path PATH        Model checkpoint path
+                          (default: model/model_general.ckpt)
+  --mapping_file PATH      TF mapping file
+                          (default: data/tf_features/tf_to_feature_mapping_exact.json)
+  --features_dir PATH      Features directory
+                          (default: data/tf_features)
+  --output_prefix NAME     Output filename prefix
+
+## Example Workflow
+
+## Example Workflow
+
+```bash
+# Step 1: Process DNA sequences into one-hot encoded format
+cd predict_new_TF
+python dna_onehot_encoder.py --sequence 'ATGCGATCG' --output DNA_sequences.mat
+
+# Step 2: Generate protein features using ESM-DBP model
+python ESM-DBP/ESM_DBP.py /ESM-DBP/model/ AP-2gamma_Q92754.fasta /example cuda:0
+
+# Step 3: Move to training directory
+cd training
+
+# Step 4: Run TF binding prediction
+python predict_newTF.py \
+  --tf_fea_file ../example/protein_features.fea \
+  --sequences_file DNA_sequences.mat \
+  --model_path model/model_general.ckpt \
+  --mapping_file data/tf_features/tf_to_feature_mapping_exact.json \
+  --features_dir data/tf_features \
+  --output_prefix Tf_prediction
+
+# Final results will be saved to results.csv
+```
+
+### Output Files
+- `DNA_sequences.mat` - One-hot encoded DNA sequences
+- `/example/protein_features.fea` - Protein/TF features  
+- `results.csv` - Final TF binding predictions
 
 ## Citation
