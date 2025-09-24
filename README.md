@@ -91,14 +91,14 @@ python train_general.py [arguments]
 ### Testing
 For testing use `test.ipynb`
 
-### Prediction
+## Prediction
 To run prediction for the new transcription factors(TFs):
 
-## 1. DNA One-Hot Encoder
+### 1. DNA One-Hot Encoder
 
 Converts DNA sequences into one-hot encoded format and saves them as `.mat` files.
 
-### Usage
+#### Usage
 ```bash
 python dna_onehot_encoder.py [arguments]
 
@@ -118,7 +118,7 @@ Arguments:
 ```bash 
 python dna_onehot_encoder.py --sequence "ATGCGATCGTAGC" --output my_sequence.mat
 ```
-## 2.TF Embedder
+### 2.TF Embedder
 
 1. Download model files from [Hugging Face](https://huggingface.co/zengwenwu/ESM-DBP/tree/main)
 2. Place the `ESM-DBP.model` files in the `ESM-DBP/` directory
@@ -135,7 +135,7 @@ Arguments:
                            (e.g. /home/user/results/)
 ```
                 
-## 3. To predict Transcription Factor binding prediction
+### 3. To predict Transcription Factor binding prediction
 ``` bash 
 python predict.py [OPTIONS] --tf_fea_file TF_FILE --sequences_file SEQ_FILE
 
@@ -153,7 +153,7 @@ Optional Arguments:
   --output_prefix NAME     Output filename prefix
 ```
 
-## Example Workflow
+### Example Workflow
 
 ```bash
 # Step 1: Process DNA sequences into one-hot encoded format
