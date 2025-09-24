@@ -113,6 +113,7 @@ Arguments:
                    (e.g. --output results.mat)
   --window_size     Sequence length (default: 1000)
   --no_complement   Don't add reverse complement
+  ```
 
 ```bash 
 python dna_onehot_encoder.py --sequence "ATGCGATCGTAGC" --output my_sequence.mat
@@ -122,7 +123,8 @@ python dna_onehot_encoder.py --sequence "ATGCGATCGTAGC" --output my_sequence.mat
 1. Download model files from [Hugging Face](https://huggingface.co/zengwenwu/ESM-DBP/tree/main)
 2. Place the `ESM-DBP.model` files in the `ESM-DBP/` directory
 
-python prediction.py /path/to/ESM-DBP.model/ input.fasta /output/dir/ device
+```bash
+python ESM_DBP.py /path/to/ESM-DBP.model/ input.fasta /output/dir/ device
 
 Arguments:
   /path/to/ESM-DBP.model/   Full path to directory with model files
@@ -131,8 +133,10 @@ Arguments:
                            (e.g. TF.fasta)
   /output/dir/              Output directory for TF features
                            (e.g. /home/user/results/)
+```
                 
-3. To predict Transcription Factor binding prediction
+## 3. To predict Transcription Factor binding prediction
+``` bash 
 python predict.py [OPTIONS] --tf_fea_file TF_FILE --sequences_file SEQ_FILE
 
 Required Arguments:
@@ -147,8 +151,7 @@ Optional Arguments:
   --features_dir PATH      Features directory
                           (default: data/tf_features)
   --output_prefix NAME     Output filename prefix
-
-## Example Workflow
+```
 
 ## Example Workflow
 
