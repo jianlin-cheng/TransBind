@@ -157,13 +157,14 @@ Optional Arguments:
 
 ```bash
 # Step 1: Process DNA sequences into one-hot encoded format
-cd predict_new_TF
+cd Predict_new_TF
 python dna_onehot_encoder.py --sequence 'ATGCGATCG' --output DNA_sequences.mat
 
 # Step 2: Generate protein features using ESM-DBP model
-python ESM-DBP/ESM_DBP.py /ESM-DBP/model/ AP-2gamma_Q92754.fasta /example cuda:0
+python ESM-DBP/ESM_DBP.py /ESM-DBP/model/ AP-2gamma_Q92754.fasta /example 
 
 # Step 3: Move to training directory
+cd ..
 cd training
 
 # Step 4: Run TF binding prediction
