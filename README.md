@@ -153,14 +153,17 @@ Arguments:
 ```
 
 ### Example Workflow
+This section outlines the steps to perform transcription factor (TF) binding prediction, from processing DNA sequences to generating results.
 
 ```bash
 # Step 1: Process DNA sequences into one-hot encoded format
 cd Predict_new_TF
 python dna_onehot_encoder.py --sequence 'ATGCGATCG' --output DNA_sequences.mat
+# This command will generate the one-hot encoded matrix and save it as DNA_sequences.mat.
 
 # Step 2: Generate protein features using ESM-DBP model
-python ESM-DBP/ESM_DBP.py /ESM-DBP/model/ AP-2gamma_Q92754.fasta /example 
+python ESM-DBP/ESM_DBP.py /ESM-DBP/model/ AP-2gamma_Q92754.fasta /example
+# This will produce protein features and save them in the /example directory.
 
 # Step 3: Move to training directory
 cd ..
@@ -174,13 +177,13 @@ python predict_newTF.py \
   --mapping_file data/tf_features/tf_to_feature_mapping_exact.json \
   --features_dir data/tf_features \
   --output_prefix Tf_prediction
+# This will generate the TF binding predictions and save them with the prefix Tf_prediction.
 
-# Final results will be saved to results.csv
-Example of results.csv 
+# Final results will be saved in results.csv with a column representing the binding probability for each prediction. For example:
 
 binding_probability
-9.94269285001792e-05 
-```
+9.94269285001792e-05
+
 
 ### Output Files
 - `DNA_sequences.mat` - One-hot encoded DNA sequences
