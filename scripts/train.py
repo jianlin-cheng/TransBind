@@ -353,6 +353,9 @@ class ProteinAware_TransBind(pl.LightningModule):
             print(f"Average PR AUC: {avg_aupr:.5f}")
             print(f"Median ROC AUC: {median_auroc:.5f}")
             print(f"Median PR AUC: {median_aupr:.5f}")
+            print(f"Cross-attention: {self.use_cross_attention}")
+            print(f"Using OPTIMIZED parameters (16 heads, LR=0.000328)")
+            print(f"Using real protein features: True")
             print(f"==================================================\n")
         
 
