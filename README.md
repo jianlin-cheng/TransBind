@@ -80,16 +80,18 @@ Update the following paths in your configuration:
 Run the main training script to train TransBind 
 
 ```bash
+cd training
 python train.py
 ```
 
 Run the train_general.py to train TransBind_general
 ```bash
+cd training
 python train_general.py
 ```
 
 ### Testing
-For testing use `test.ipynb`
+For testing use `test.ipynb` in the training directory
 
 ## Prediction
 To run prediction for the new transcription factors(TFs):
@@ -100,6 +102,7 @@ Converts DNA sequences into one-hot encoded format and saves them as `.mat` file
 
 #### Usage
 ```bash
+cd Predict_new_TF/
 python dna_onehot_encoder.py [arguments]
 
 Arguments:
@@ -137,6 +140,7 @@ Arguments:
                 
 ### 3. To predict Transcription Factor binding prediction
 ``` bash 
+cd training
 python predict.py  [arguments]
 
 Arguments:
@@ -175,6 +179,10 @@ python predict_newTF.py \
   --output_prefix Tf_prediction
 
 # Final results will be saved to results.csv
+Example of results.csv 
+
+binding_probability
+9.94269285001792e-05 
 ```
 
 ### Output Files
