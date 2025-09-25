@@ -183,12 +183,6 @@ python predict_newTF.py \
 
 binding_probability
 0.57
-
-
-### Output Files
-- `DNA_sequences.mat` - One-hot encoded DNA sequences
-- `/example/protein_features.fea` - Protein/TF features  
-- `results.csv` - Final TF binding predictions
 ```
 
 ## Citation
