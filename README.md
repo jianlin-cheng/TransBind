@@ -49,12 +49,12 @@ This pipeline prepares training data for transcription factor binding site predi
 | 4 | `5_build_bedFile.py` <br> `5.1_convert_metadata.py` | Convert processed data to individual BED files |
 | 5 | `6_build_dataset.py` <br> `6.1_extract_labelname.py` | Build final dataset → saves to `data/` directory and extract label names |
 | 6 | `7_prediction_sh` |1. Download model files from [Hugging Face](https://huggingface.co/zengwenwu/ESM-DBP/tree/main)
-<br> 2. Place the `ESM-DBP.model` files in the `ESM-DBP/` directory <br> ./7_prediction_sh "/ESM-DBP/model" "/path/to/the/fasta/Files/of/TF" "/path/to/output/directory" "cuda:0"
+ 2. Place the `ESM-DBP.model` files in the `ESM-DBP/` directory 3. run ./7_prediction_sh "/ESM-DBP/model" "/path/to/the/fasta/Files/of/TF" "/path/to/output/directory" "cuda:0"
 | 7 | `8_mapping_between_filename_TF` | Create mapping between features and transcription factors |
 | 8 | `9_label_mapping_between_label_and_TF` | Create comprehensive mapping between labels and TFs |
 
 ### Protein Features
-To extract protein-level embeddings, use ESM-DBP: https://github.com/pengsl-lab/ESM-DBP
+
 
 ## Training and Testing
 
