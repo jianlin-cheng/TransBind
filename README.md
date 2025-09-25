@@ -48,7 +48,7 @@ This pipeline prepares training data for transcription factor binding site predi
 | 3 | `2_compute_overlapping_using_batch.sh` <br> `3_postprocess.sh` <br> `4_merge_peaks_with_same_labels.ipynb` | Find overlapping regions and assign labels |
 | 4 | `5_build_bedFile.py` <br> `5.1_convert_metadata.py` | Convert processed data to individual BED files |
 | 5 | `6_build_dataset.py` <br> `6.1_extract_labelname.py` | Build final dataset → saves to `data/` directory and extract label names |
-| 6 | `7_prediction_sh` |1. Download model files from [Hugging Face](https://huggingface.co/zengwenwu/ESM-DBP/tree/main)  2. Place the `ESM-DBP.model` files in the `ESM-DBP/` directory 3. run ./7_prediction_sh "/ESM-DBP/model" "/path/to/the/fasta/Files/of/TF" "/path/to/output/directory" "cuda:0"
+| 6 | `7_prediction_sh` |Download model files from [Hugging Face](https://huggingface.co/zengwenwu/ESM-DBP/tree/main) ->  Place the `ESM-DBP.model` files in the `ESM-DBP/` directory -> run ./7_prediction_sh "/ESM-DBP/model" "/path/to/the/fasta/Files/of/TF" "/path/to/output/directory" "cuda:0"
 | 7 | `8_mapping_between_filename_TF` | Create mapping between features and transcription factors |
 | 8 | `9_label_mapping_between_label_and_TF` | Create comprehensive mapping between labels and TFs |
 
