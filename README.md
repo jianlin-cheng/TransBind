@@ -60,10 +60,9 @@ Before training the model, complete the following steps:
 
 | Step | Process              | Description                                                                 |
 |------|----------------------|-----------------------------------------------------------------------------|
-| 1️   | Data preprocessing   | Complete steps 1–7 from the preprocessing pipeline described above          |
-| 2️   | Protein embeddings   | Extract protein-level embeddings using **ESM-DBP**                          |
-| 3️  | Dataset organization | Ensure `train.mat` and `valid.mat` are stored in the `data/` directory      |
-| 4️  | Feature mapping      | Verify `tf_to_feature_mapping_exact.json` exists (links TF labels to features) |
+| 1️   | Data preprocessing   | Complete steps 1–8 from the preprocessing pipeline described above          |                       |
+| 2  | Dataset organization | Ensure `train.mat` and `valid.mat` are stored in the `data/` directory      |
+| 3  | Feature mapping      | Verify `tf_to_feature_mapping_exact.json` exists (links TF labels to features) |
 
 ---
 
