@@ -137,13 +137,11 @@ Arguments:
                 
 ### 3. To predict Transcription Factor binding prediction
 ``` bash 
-python predict.py [OPTIONS] --tf_fea_file TF_FILE --sequences_file SEQ_FILE
+python predict.py  [arguments]
 
-Required Arguments:
+Arguments:
   --tf_fea_file PATH       Path to TF features file (.fea) obtained from step 2
   --sequences_file PATH    Path to DNA sequences file (.mat) obtained from step 1
-
-Optional Arguments:
   --model_path PATH        Model checkpoint path
                           (default: model/model_general.ckpt)
   --mapping_file PATH      TF mapping file
