@@ -77,18 +77,18 @@ Update the following paths in your configuration:
 Run the main training script to train TransBind 
 
 ```bash
-cd training
+cd scripts
 python train.py
 ```
 
 Run the train_general.py to train TransBind_general
 ```bash
-cd training
+cd scripts
 python train_general.py
 ```
 
 ### Testing
-For testing use `test.ipynb` in the training directory
+For testing use `test.ipynb` in the scripts directory
 
 ## Prediction
 To run prediction for the new transcription factors(TFs):
@@ -137,7 +137,7 @@ Arguments:
                 
 ### 3. To predict Transcription Factor binding prediction
 ``` bash 
-cd training
+cd scripts
 python predict.py  [arguments]
 
 Arguments:
@@ -165,9 +165,9 @@ python dna_onehot_encoder.py --sequence 'ATGCGATCG' --output DNA_sequences.mat
 python ESM-DBP/ESM_DBP.py /ESM-DBP/model/ AP-2gamma_Q92754.fasta /example
 # This will produce protein features and save them in the /example directory.
 
-# Step 3: Move to training directory
+# Step 3: Move to scripts directory
 cd ..
-cd training
+cd scripts
 
 # Step 4: Run TF binding prediction
 python predict_newTF.py \
@@ -182,12 +182,13 @@ python predict_newTF.py \
 # Final results will be saved in results.csv with a column representing the binding probability for each prediction. For example:
 
 binding_probability
-9.94269285001792e-05
+0.57
 
 
 ### Output Files
 - `DNA_sequences.mat` - One-hot encoded DNA sequences
 - `/example/protein_features.fea` - Protein/TF features  
 - `results.csv` - Final TF binding predictions
+```
 
 ## Citation
