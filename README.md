@@ -190,13 +190,14 @@ binding_probability
 If you use this code, please cite our paper:
 
 ```bibtex
-@article{Basnet2025,
-  author    = {Shreya Basnet and Jianlin Cheng},
-  title     = {Integrating Protein and DNA Embeddings for Improving Genome-Wide Transcription Factor Binding Site Prediction},
-  journal   = {bioRxiv},
-  year      = {2025},
-  doi       = {10.1101/2025.09.15.676319},
-  url       = {https://www.biorxiv.org/content/early/2025/09/17/2025.09.15.676319},
-  eprint    = {https://www.biorxiv.org/content/early/2025/09/17/2025.09.15.676319.full.pdf}
+@article {Basnet2025.09.15.676319,
+	author = {Basnet, Shreya and Cheng, Jianlin},
+	title = {Integrating Protein and DNA Embeddings for Improving Genome-Wide Transcription Factor Binding Site Prediction},
+	elocation-id = {2025.09.15.676319},
+	year = {2025},
+	doi = {10.1101/2025.09.15.676319},
+	publisher = {Cold Spring Harbor Laboratory},
+	journal = {bioRxiv}
 }
+
 
