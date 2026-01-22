@@ -26,25 +26,6 @@ class TransBindDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
 
-class PositionalEncoding(nn.Module):
-    """Positional encoding for sequence position awareness"""
-    def __init__(self, d_model, max_len=1000):
-        super().__init__()
-        
-        pe = torch.zeros(max_len, d_model)
-        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * 
-                           (-math.log(10000.0) / d_model))
-        
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-        pe = pe.unsqueeze(0).transpose(0, 1)
-        
-        self.register_buffer('pe', pe)
-        
-    def forward(self, x):
-        return x + self.pe[:x.size(1), :].transpose(0, 1)
-
 class ProteinFeatureLoader:
 
     
@@ -55,7 +36,6 @@ class ProteinFeatureLoader:
         self.load_protein_features()
     
     def load_mapping(self):
-        """Load the TF to feature mapping"""
         with open(self.mapping_file, 'r') as f:
             self.mapping_data = json.load(f)
         
@@ -66,7 +46,6 @@ class ProteinFeatureLoader:
         print(f"Found {len(self.feature_files)} unique feature files")
     
     def load_single_feature_file(self, feature_file):
-        """Load a single .fea file and return the feature vector"""
         file_path = os.path.join(self.features_dir, feature_file)
         
         if not os.path.exists(file_path):
@@ -109,7 +88,6 @@ class ProteinFeatureLoader:
             return None
     
     def load_protein_features(self):
-        """Load all protein features and create feature matrix"""
         print("Loading protein features...")
         
 
@@ -132,7 +110,6 @@ class ProteinFeatureLoader:
         num_feature_files = len(self.feature_files)
         self.feature_matrix = np.zeros((num_feature_files, feature_dim))
         
-        # Load all features
         loaded_count = 0
         for idx, feature_file in enumerate(self.feature_files):
             features = self.load_single_feature_file(feature_file)
@@ -143,32 +120,26 @@ class ProteinFeatureLoader:
                     loaded_count += 1
                 else:
                     print(f"Dimension mismatch for {feature_file}: expected {feature_dim}, got {len(features)}")
-                    # Use zeros for mismatched dimensions
                     self.feature_matrix[idx] = np.zeros(feature_dim)
             else:
-                # Use zeros for missing files
                 self.feature_matrix[idx] = np.zeros(feature_dim)
         
         print(f"Successfully loaded {loaded_count}/{num_feature_files} feature files")
         print(f"Feature matrix shape: {self.feature_matrix.shape}")
         
-        # Features are pre-processed, so no normalization needed
         self.feature_matrix = self.normalize_features(self.feature_matrix)
     
     def normalize_features(self, features):
-        """Features are already processed, no normalization needed"""
         print("Features are pre-processed, skipping normalization")
         return features
     
     def get_tf_features_matrix(self):
-        """Get the TF features matrix aligned with the 690 labels"""
         tf_features = np.zeros((690, self.feature_matrix.shape[1]))
         
         for tf_idx in range(690):
             feature_id = self.tf_to_feature_mapping[tf_idx]
-            if feature_id != -1:  # -1 means no mapping
+            if feature_id != -1:
                 tf_features[tf_idx] = self.feature_matrix[feature_id]
-            # else: keep zeros for unmapped TFs
         
         return tf_features
 
@@ -193,8 +164,6 @@ class ProteinAware_TransBind(pl.LightningModule):
             bidirectional=True,
             dropout=dropout
         )
-        
-        self.pos_encoding = PositionalEncoding(320, max_len=100)
 
         self.transformer_layer = nn.TransformerEncoderLayer(
             d_model=320,
@@ -216,7 +185,6 @@ class ProteinAware_TransBind(pl.LightningModule):
         self.protein_feature_projection = nn.Linear(original_feature_dim, tf_feature_projection_dim)
         self.register_buffer('tf_features_raw', torch.FloatTensor(tf_features_matrix))
         
-        # Cross-attention setup
         self.use_cross_attention = use_cross_attention
         
         if self.use_cross_attention:
@@ -244,8 +212,7 @@ class ProteinAware_TransBind(pl.LightningModule):
         self.validation_step_outputs = []
     
     def get_projected_tf_features(self):
-        """Get protein features projected to the desired dimension"""
-        return self.protein_feature_projection(self.tf_features_raw)  # (690, projection_dim)
+        return self.protein_feature_projection(self.tf_features_raw)
     
     def forward(self, x):
 
@@ -255,36 +222,32 @@ class ProteinAware_TransBind(pl.LightningModule):
         x = self.dropout_cnn(x)
         x = x.transpose(1, 2) 
         lstm_out, _ = self.bilstm(x)  
-        x = self.pos_encoding(lstm_out)
-        dna_sequence_features = self.transformer_layer(x) 
+        dna_sequence_features = self.transformer_layer(lstm_out) 
         
-        # Get global DNA representation
         x = dna_sequence_features.transpose(1, 2)  
         dna_global = self.global_pool(x).squeeze(-1) 
         if self.use_cross_attention:
-            # Get projected protein features
-            tf_features = self.get_projected_tf_features()  # (690, projection_dim)
+            tf_features = self.get_projected_tf_features()
             batch_size = dna_global.size(0)
             
-            # Expand TF features for batch processing
-            tf_batch = tf_features.unsqueeze(0).expand(batch_size, -1, -1)  # (batch, 690, projection_dim)
+            tf_batch = tf_features.unsqueeze(0).expand(batch_size, -1, -1)
             attended_dna, attention_weights = self.cross_attention(
                 query=tf_batch,              
                 key=dna_sequence_features,    
                 value=dna_sequence_features   
             )
-            attended_with_residual = attended_dna + tf_batch  # (batch, 690, 320)
-            tf_aware_features = self.attention_proj(attended_with_residual.mean(dim=1))  # (batch, 320)
-            combined_features = torch.cat([dna_global, tf_aware_features], dim=1)  # (batch, 640)
+            attended_with_residual = attended_dna + tf_batch
+            tf_aware_features = self.attention_proj(attended_with_residual.mean(dim=1))
+            combined_features = torch.cat([dna_global, tf_aware_features], dim=1)
             
         else:
       
-            tf_features = self.get_projected_tf_features()  # (690, projection_dim)
-            avg_tf_features = tf_features.mean(dim=0)  # (projection_dim,)
-            tf_context = avg_tf_features.unsqueeze(0).expand(dna_global.size(0), -1)  # (batch, projection_dim)
-            combined_features = torch.cat([dna_global, tf_context], dim=1)  # (batch, 640)
-        x = F.relu(self.fc1(combined_features))  # Now 640 -> 1024
-        x = self.fc2(x)  # 1024 -> 690 raw logits
+            tf_features = self.get_projected_tf_features()
+            avg_tf_features = tf_features.mean(dim=0)
+            tf_context = avg_tf_features.unsqueeze(0).expand(dna_global.size(0), -1)
+            combined_features = torch.cat([dna_global, tf_context], dim=1)
+        x = F.relu(self.fc1(combined_features))
+        x = self.fc2(x)
         
         return x
     
@@ -298,7 +261,7 @@ class ProteinAware_TransBind(pl.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        logits = self(x)  # Raw logits
+        logits = self(x)
         loss = self.criterion(logits, y)
         y_hat = torch.sigmoid(logits)
         self.validation_step_outputs = getattr(self, 'validation_step_outputs', [])
@@ -332,20 +295,17 @@ class ProteinAware_TransBind(pl.LightningModule):
             except ValueError:
                 continue
         
-        # Calculate average metrics
         if len(auroc_scores) > 0:
             avg_auroc = np.mean(auroc_scores)
             avg_aupr = np.mean(aupr_scores)
             median_auroc = np.median(auroc_scores)
             median_aupr = np.median(aupr_scores)
             
-            # Log metrics
             self.log('val_auroc', avg_auroc, on_epoch=True, prog_bar=True)
             self.log('val_aupr', avg_aupr, on_epoch=True, prog_bar=True)
             self.log('val_auroc_median', median_auroc, on_epoch=True)
             self.log('val_aupr_median', median_aupr, on_epoch=True)
             
-            # Print detailed results
             print(f"\n==================================================")
             print(f"EPOCH {self.current_epoch} VALIDATION RESULTS")
             print(f"==================================================")
@@ -402,9 +362,9 @@ class TransBindDataModule(pl.LightningDataModule):
         print(f"y_train: {y_train.shape}")
         print(f"X_valid: {X_valid.shape}")
         print(f"y_valid: {y_valid.shape}")
-        pos_counts = np.sum(y_train, axis=0)  # Count positive samples per class
-        neg_counts = len(y_train) - pos_counts  # Count negative samples per class
-        pos_weights = neg_counts / (pos_counts + 1e-8)  # Avoid division by zero
+        pos_counts = np.sum(y_train, axis=0)
+        neg_counts = len(y_train) - pos_counts
+        pos_weights = neg_counts / (pos_counts + 1e-8)
         self.pos_weights = torch.FloatTensor(pos_weights)
         
         self.train_dataset = TransBindDataset(X_train, y_train)
@@ -419,12 +379,10 @@ class TransBindDataModule(pl.LightningDataModule):
                          shuffle=False, num_workers=self.num_workers, pin_memory=True)
 
 def main():
-    # Configuration
     RESUME_FROM_CHECKPOINT = False
     CHECKPOINT_PATH = ""
     DATA_FOLDER = "/data/"
     
-    # 🆕 NEW: Protein feature configuration
     MAPPING_FILE = ".../tf_to_feature_mapping_exact.json"
     FEATURES_DIR = ".../tf_features/"
 
@@ -443,7 +401,6 @@ def main():
     for key, value in OPTIMIZED_PARAMS.items():
         print(f"   {key}: {value}")
     
-    # Set device
     if torch.cuda.is_available():
         accelerator = "gpu"
         devices = [0]
@@ -451,11 +408,9 @@ def main():
         accelerator = "cpu"
         devices = 1
     
-    # Data module
     data_module = TransBindDataModule(data_folder=DATA_FOLDER, batch_size=256)
-    data_module.setup()  # Setup to get pos_weights
+    data_module.setup()
     
-    # Model
     if RESUME_FROM_CHECKPOINT and os.path.exists(CHECKPOINT_PATH):
         print(f"Loading model from: {CHECKPOINT_PATH}")
         model = ProteinAware_TransBind.load_from_checkpoint(
@@ -491,7 +446,6 @@ def main():
     
 
     
-    # Callbacks
     checkpoint_callback = ModelCheckpoint(
         dirpath="./model/",
         filename="protein-aware-{epoch:02d}-{val_aupr:.4f}",
@@ -507,10 +461,8 @@ def main():
         mode="max"
     )
     
-    # Logger
     logger = TensorBoardLogger("tb_logs", name="OPTIMIZED_protein_aware")
     
-    # Trainer
     trainer = pl.Trainer(
         max_epochs=60,
         accelerator=accelerator,
@@ -522,13 +474,11 @@ def main():
         enable_progress_bar=True
     )
     
-    # Training
     if RESUME_FROM_CHECKPOINT and os.path.exists(CHECKPOINT_PATH):
         trainer.fit(model, data_module, ckpt_path=CHECKPOINT_PATH)
     else:
         trainer.fit(model, data_module)
     
-    # Save final model
     trainer.save_checkpoint("./model/OPTIMIZED_protein_aware_final.ckpt")
   
 
