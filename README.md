@@ -33,6 +33,7 @@ TransBind is a deep learning framework for transcription factor (TF) binding pre
 ### Quick Install
 ```bash
 git clone https://github.com/jianlin-cheng/TransBind.git
+=======
 cd TransBind
 conda env create -f environment.yml
 conda activate transBind
