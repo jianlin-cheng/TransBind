@@ -8,7 +8,8 @@ from pathlib import Path
 
 class CorrectedCSVTFFeatureMapper:
     def __init__(self, 
-                 csv_file="/bml/shreya/BenchMarking_TF/tbinet/create_mapping_label_tf/tf_celltype_list_uniprotID_graphs.csv",
+                 #csv_file="/bml/shreya/BenchMarking_TF/tbinet/create_mapping_label_tf/tf_celltype_list_uniprotID_graphs.csv",
+                 csv_file="/bml/shreya/TF_binding_site/dataset_test/DEEPSEA_dataextraction/data/tf_celltype_list_uniprotID.csv",
                  feature_index_file="/bml/shreya/BenchMarking_TF/tbinet/data/deepsea_feature_names.txt",
                  deepsea_data_dir="/bml/shreya/BenchMarking_TF/tbinet/data/data_new",
                  final_features_dir="/bml/shreya/BenchMarking_TF/ESM-DBP/output_final"):
@@ -60,12 +61,12 @@ class CorrectedCSVTFFeatureMapper:
     
     def find_matching_feature_file(self, tf_name, uniprot_id):
         """Find the matching .fea file for a given TF name and UniProt ID"""
-        # Pattern: TF-name_UniProtID.fea (e.g., AP-2alpha_P05549.fea)
-        
+
+        print(f"    LOOKUP: tf_name='{tf_name}', uniprot_id='{uniprot_id}'") 
         # Special cases mapping
         special_mappings = {
-            'Sin3Ak-20': 'SIN3A',     # Sin3Ak-20 -> SIN3A
-            'Sin3A-20': 'SIN3A',      # Alternative format
+            'SIN3A': 'SIN3AK-20',     # Sin3Ak-20 -> SIN3A
+            #'Sin3A': 'SIN3A-20',      # Alternative format
             'Pol2-4H8': 'Pol2',       # RNA Polymerase II -> Pol2
             'PAX5-N19': 'PAX5-C20',   # PAX5-N19 -> PAX5-C20 (exact match found)
             'GATA2-sc267': 'GATA-2',  # GATA2 -> GATA-2 (with hyphen)
@@ -74,7 +75,7 @@ class CorrectedCSVTFFeatureMapper:
             'eGFP-FOS': 'c-Fos',      # eGFP-FOS -> c-Fos
             'eGFP-JunD': 'JunD',      # eGFP-JunD -> JunD
             'TCF7L2_C9B9': 'TCF7L2',  # Remove antibody suffix
-            'USF1': 'USF-1',          # USF1 -> USF-1 (with hyphen)
+            'USF-1': 'USF1',          # USF1 -> USF-1 (with hyphen)
             'UBTF': 'UBF',            # UBTF -> UBF
         }
         
@@ -127,11 +128,15 @@ class CorrectedCSVTFFeatureMapper:
         for tf_var in unique_variations:
             possible_filenames.extend([
                 f"{tf_var}_{uniprot_id}.fea",
+                f"{tf_var}_{uniprot_id.lower()}.fea",   # ← add lowercase UniProt ID
                 f"{tf_var.replace(' ', '-')}_{uniprot_id}.fea",
+                f"{tf_var.replace(' ', '-')}_{uniprot_id.lower()}.fea",  # ← add lowercase
                 f"{tf_var.replace(' ', '_')}_{uniprot_id}.fea",
-                f"{tf_var.replace('-', '_')}_{uniprot_id}.fea"
+                f"{tf_var.replace(' ', '_')}_{uniprot_id.lower()}.fea",  # ← add lowercase
+                f"{tf_var.replace('-', '_')}_{uniprot_id}.fea",
+                f"{tf_var.replace('-', '_')}_{uniprot_id.lower()}.fea",  # ← add lowercase
             ])
-        
+                
         # Remove duplicates
         possible_filenames = list(dict.fromkeys(possible_filenames))
         
@@ -184,8 +189,8 @@ class CorrectedCSVTFFeatureMapper:
             csv_mapping[normalized_filename] = {
                 'tf_name': row['Transcription Factor'],
                 'cell_type': row['Cell Type'],
-                'uniprot_id': row['UniProt ID'],
-                'original_graph_file': row['TF_graph_file']  # Keep original for reference
+                'uniprot_id': row['UniProt ID']
+               # 'original_graph_file': row['TF_graph_file']  
             }
         
         # Create the exact 690-dimensional mapping
@@ -353,7 +358,7 @@ class CorrectedCSVTFFeatureMapper:
         }
         
         # Save mapping file
-        mapping_file = os.path.join(self.deepsea_data_dir, "tf_to_feature_mapping_exact.json")
+        mapping_file = os.path.join(self.deepsea_data_dir, "tf_to_feature_mapping_exact_new.json")
         with open(mapping_file, 'w') as f:
             json.dump(mapping_data, f, indent=2)
         
