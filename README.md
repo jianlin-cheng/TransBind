@@ -9,6 +9,7 @@
   - [Protein Features](#protein-features)
 - [Training and Testing](#training-and-testing)
   - [Training Data Preparation](#training-data-preparation)
+  - [Training Dataset](#training-dataset)
   - [Training](#training)
   - [Testing](#testing)
   - [Prediction](#prediction)
@@ -33,7 +34,6 @@ TransBind is a deep learning framework for transcription factor (TF) binding pre
 ### Quick Install
 ```bash
 git clone https://github.com/jianlin-cheng/TransBind.git
-=======
 cd TransBind
 conda env create -f environment.yml
 conda activate transBind
@@ -66,6 +66,13 @@ Before training the model, complete the following steps:
 | 3  | Feature mapping      | Verify `tf_to_feature_mapping_exact.json` exists (links TF labels to features) |
 
 ---
+
+
+### Training Dataset
+
+The training dataset is available on Zenodo:
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19338588.svg)](https://doi.org/10.5281/zenodo.19338588)
+
 
 ### Training  
 Update the following paths in your configuration:
